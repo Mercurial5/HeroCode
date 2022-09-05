@@ -47,6 +47,6 @@ def login():
 
     user = Users.get(username=username, password=password)
     if user is None:
-        return dict(status=False)
+        return dict(status=False, reason=s.wrong_credentials)
 
     return dict(status=True, user=user.serialize())
