@@ -28,13 +28,29 @@ def register():
     try:
         db.session.commit()
     except IntegrityError as e:
+        # Because we already faced issues with adding a new user
+        # we must roll back, because it may raise errors again if
+        # we call db.session.commit another time in this function
+        db.session.rollback()
+
         try:
             # https://stackoverflow.com/questions/4666973/how-to-extract-the-substring-between-two-markers
             duplicate_key = re.search('\'users.(.+?)\'"', e.args[0]).group(1)
+            duplicate_entry = re.search('Duplicate entry \'(.+?)\'', e.args[0]).group(1)
         except AttributeError:
             return dict(status=False, reason=strings.unexpected_duplicate_error)
 
-        return dict(status=False, reason=f'Duplicate key - {duplicate_key}')
+        # If existing user with those parameters isn't activated,
+        # we can register a new user
+        existing_user = Users.get(**{duplicate_key: duplicate_entry})
+        if existing_user.is_active:
+            return dict(status=False, reason=f'Duplicate key - {duplicate_key}')
+
+        existing_user.delete()
+        db.session.commit()
+
+        db.session.add(user)
+        db.session.commit()
 
     mailing.email_verification(email)
 
