@@ -20,7 +20,7 @@ class Mailing:
         mail['To'] = email
 
         token = token_serializer.generate_token(email)
-        token = url_for('auth.register', token=token, _external=True)
+        token = url_for('auth.confirm_email', token=token, _external=True)
         mail.set_content(token)
 
         with SMTP_SSL('smtp.gmail.com', self.port) as SMTP:
