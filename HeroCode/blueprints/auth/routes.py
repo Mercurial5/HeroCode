@@ -1,5 +1,4 @@
 from sqlalchemy.exc import IntegrityError
-from flask.json import jsonify
 from flask import request
 import re
 
@@ -8,6 +7,7 @@ from HeroCode.models import Users
 from HeroCode import db
 
 from utils import strings as s
+from utils import mailing
 
 
 @auth.route('/register', methods=['POST'])
@@ -33,6 +33,8 @@ def register():
             return dict(status=False, reason=s.unexpected_duplicate_error)
 
         return dict(status=False, reason=f'Duplicate key - {duplicate_key}')
+
+    mailing.email_verification(email)
 
     return dict(status=True)
 
