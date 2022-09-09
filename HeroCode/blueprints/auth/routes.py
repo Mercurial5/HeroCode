@@ -46,7 +46,7 @@ def register():
         if existing_user.is_active:
             return dict(status=False, reason=f'Duplicate key - {duplicate_key}')
 
-        existing_user.delete()
+        db.session.delete(existing_user)
         db.session.commit()
 
         db.session.add(user)
