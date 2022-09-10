@@ -10,8 +10,8 @@ class Tests(db.Model):
     output = db.Column(db.Text)
 
     @staticmethod
-    def get(**kwargs) -> Tests:
-        return Tests.query.filter_by(**kwargs).first()
+    def get(**kwargs) -> list[Tests]:
+        return Tests.query.filter_by(**kwargs)
 
     def serialize(self):
         return {

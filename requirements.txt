@@ -16,3 +16,4 @@ PyMySQL==1.0.2
 python-dotenv==0.21.0
 SQLAlchemy==1.4.40
 Werkzeug==2.2.2
+requests==2.28.1

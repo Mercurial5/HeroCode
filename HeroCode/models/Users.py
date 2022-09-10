@@ -11,7 +11,7 @@ class Users(db.Model):
     password = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(255), unique=True, nullable=False)
     is_active = db.Column(db.Boolean, nullable=False, default=False)
-    registered = db.Column(db.DATETIME, nullable=False, default=datetime.now)
+    registered = db.Column(db.DateTime(timezone=True), nullable=False, default=datetime.now)
 
     @staticmethod
     def get(**kwargs) -> Users:
