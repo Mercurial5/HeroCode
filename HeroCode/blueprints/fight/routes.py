@@ -2,6 +2,7 @@ import requests
 
 from HeroCode.blueprints.fight import fight
 from HeroCode.queries import getters
+from utils import strings
 
 
 @fight.route('/attack', methods=['POST'])
@@ -58,7 +59,12 @@ def get_level():
     enemy_id = 1
     # ...
     enemy = getters.get_enemy(enemy_id)
+    if enemy is None:
+        return dict(status=False, reason=strings.missed_data)
+
     problems = getters.get_problems(enemy_id)
+    if problems.count() == 0:
+        return dict(status=False, reason=strings.problems_is_missing)
 
     problem_names = []
     problem_descriptions = []
@@ -68,7 +74,7 @@ def get_level():
 
     response = {
         'enemy_hp': enemy.hp,
-        'stages_count': len(problems),
+        'stages_count': problems.count(),
         'problem_names': problem_names,
         'problem_descriptions': problem_descriptions
     }
