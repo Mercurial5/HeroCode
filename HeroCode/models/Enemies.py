@@ -4,10 +4,10 @@ from HeroCode.models import db
 
 
 class Enemies(db.Model):
-    __tablename__ = 'enemies'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255))
     hp = db.Column(db.Integer, nullable=False)
+    damage = db.Column(db.Integer)
 
     @staticmethod
     def get(**kwargs) -> Enemies:
