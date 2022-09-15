@@ -1,28 +1,30 @@
+from os import getenv
+
 import requests
+from flask import request
 
 from HeroCode.blueprints.fight import fight
+from HeroCode.models import Enemies
 from HeroCode.queries import getters
 from utils import strings
 
 
 @fight.route('/attack', methods=['POST'])
 def attack():
-    #Attach this variables within request content
-    code = "print('Hello, world!')"
-    enemy_id = 1
-    enemy_damage = 10#?
-    user_damage = 10#?
-    #...
+    body = request.json
+    code = body['code']
+    enemy_id = body['enemy_id']
+    enemy_damage = Enemies.get(id=enemy_id)['damage']
+    user_damage = 1
 
-    # Getting response from compiler
     params = {
         'code': code
     }
     headers = {
-        'Content-type': 'content_type_value'
+        'Content-type': 'application/json',
+        'Accept': 'application/json'
     }
-    compiler_response = requests.post('http://example.com', params=params, headers=headers)
-    print(compiler_response.__dict__)
+    compiler_response = requests.post(getenv('CODEAPI_HOST'), params=params, headers=headers)
     status = True
 
     # This values filling from compiler response
@@ -31,7 +33,7 @@ def attack():
     # +1 - time and memory can be (< 1)
     # time and memory dividing user's damage
     time = abs(10) + 1
-    memory = 10
+    memory = abs(10) + 1
     console_message = ""
 
     damage = user_damage
@@ -40,7 +42,7 @@ def attack():
     if not status:
         time = 1.0 / time
         memory = 1.0 / memory
-        user_damage = enemy_damage
+        damage = enemy_damage
 
     response = {
         'console_message': console_message,
@@ -49,15 +51,15 @@ def attack():
         'armor_damage': damage / memory
     }
 
-    return response
+    return dict(response)
 
 
 
-@fight.route('/get_level', methods=['GET'])
+@fight.route('/get_level', methods=['POST'])
 def get_level():
-    # Attach this variables within request content
-    enemy_id = 1
-    # ...
+    body = request.json
+    enemy_id = body['enemy_id']
+
     enemy = getters.get_enemy(enemy_id)
     if enemy is None:
         return dict(status=False, reason=strings.missed_data)
