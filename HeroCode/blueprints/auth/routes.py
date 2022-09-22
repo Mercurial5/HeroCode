@@ -14,9 +14,10 @@ from utils import strings
 
 @auth.route('/register', methods=['POST'])
 def register():
-    username = request.form.get('username', None)
-    email = request.form.get('email', None)
-    password = request.form.get('password', None)
+    body = request.json
+    username = body.get('username', None)
+    email = body.get('email', None)
+    password = body.get('password', None)
 
     if None in [username, email, password]:
         return dict(status=False, reason=strings.missed_data)
