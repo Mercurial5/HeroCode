@@ -1,6 +1,7 @@
 from os import getenv
 
 import requests
+import json
 from flask import request
 
 from HeroCode.blueprints.fight import fight
@@ -33,27 +34,44 @@ def attack():
     problem_id = problems[problem_number].id
     tests = Tests.get(problem_id=problem_id)
 
+    if tests.count() == 0:
+        return dict(status=False, reason="No tests!")
+    inputs = ""
+    outputs = ""
+    for test in tests:
+        inputs += test.input + "\nTestCase\n"
+        outputs += test.output + "\nTestCase\n"
+
     enemy_damage = enemy.damage
     user_damage = 1
 
-    params = {
-        'code': code
+    data = {
+        'code': code,
+        'lang': 'py',
+        'input': inputs,
+        'output': outputs,
+        'io_count': tests.count(),
+        'io_tuple_count': 1
     }
     headers = {
-        'Content-type': 'application/json',
-        'Accept': 'application/json'
+        'Content-Length': str(data.__sizeof__()),
+        'Content-type': 'application/x-www-form-urlencoded',
+        'Accept': '*/*',
+        'Connection': 'keep-alive'
     }
-    #compiler_response = requests.post(getenv('CODEAPI_HOST'), params=params, headers=headers)
-    status = True
+    session = requests.session()
+    compiler_response = session.post(getenv('CODEAPI_HOST'), data=data, headers=headers, verify=False)
+    compiler_json = json.loads(compiler_response.text)
 
-    # This values filling from compiler response
-    #
-    # 10 - value from compiler
-    # +1 - time and memory can be (< 1)
-    # time and memory dividing user's damage
-    time = abs(10) + 1
-    memory = abs(10) + 1
-    console_message = ""
+    status = compiler_json['status']
+    reason = compiler_json['reason']
+    description = compiler_json['description']
+    case = compiler_json['case']
+
+    print(compiler_json)
+
+    time = 1
+    memory = 1
 
     damage = user_damage
     if not status:
@@ -62,7 +80,8 @@ def attack():
         damage = enemy_damage
 
     response = {
-        'console_message': console_message,
+        'reason': reason,
+        'console_message': description,
         'status': status,
         'hp_damage': damage / time,
         'armor_damage': damage / memory
