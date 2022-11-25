@@ -18,6 +18,11 @@ def attack():
     enemy_id = body.get('enemy_id', None)
     problem_number = body.get('problem_number', None)
 
+    try:
+        problem_number = int(problem_number)
+    except:
+        return dict(status=False, reason=strings.missed_data)
+
     if None in [code, enemy_id, problem_number]:
         return dict(status=False, reason=strings.missed_data)
 
@@ -36,14 +41,18 @@ def attack():
 
     if tests.count() == 0:
         return dict(status=False, reason="No tests!")
+
     inputs = ""
     outputs = ""
+    #chr(10) - postgre '\n'
+    #input_template >>>  '1\n2'
+    #output_template >>> '3'
     for test in tests:
         inputs += test.input + "\nTestCase\n"
         outputs += test.output + "\nTestCase\n"
 
     enemy_damage = enemy.damage
-    user_damage = 1
+    user_damage = 50
 
     data = {
         'code': code,
@@ -88,7 +97,6 @@ def attack():
     }
 
     return dict(response)
-
 
 
 @fight.route('/get_level', methods=['POST'])
