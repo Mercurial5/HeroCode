@@ -39,7 +39,7 @@ def attack():
     strong_inputs, strong_outputs = inputs[2:], outputs[2:]
 
     enemy_damage = enemy.damage
-    user_damage = 50
+    user_damage = 1000
 
     data = {
         'code': code,
@@ -58,34 +58,36 @@ def attack():
         'Connection': 'keep-alive'
     }
 
-    response = requests.post(getenv('CODEAPI_HOST'), data=data, headers=headers, verify=False)
-    compiler_json = response.json()
+    response = requests.post(getenv('CODEAPI_HOST'), data=data, headers=headers, verify=False).json()
 
-    return compiler_json
+    if response['status']:
+        return dict(status=True)
+    else:
+        return dict(status=False)
 
-    status = compiler_json['status']
-    reason = compiler_json['reason']
-    description = compiler_json['description']
-    case = compiler_json['case']
-
-    print(compiler_json)
-
-    time = 1
-    memory = 1
-
-    damage = user_damage
-    if not status:
-        time = 1.0 / time
-        memory = 1.0 / memory
-        damage = enemy_damage
-
-    response = {
-        'reason': reason,
-        'console_message': description,
-        'status': status,
-        'hp_damage': damage / time,
-        'armor_damage': damage / memory
-    }
+    # status = compiler_json['status']
+    # reason = compiler_json['reason']
+    # description = compiler_json['description']
+    # case = compiler_json['case']
+    #
+    # print(compiler_json)
+    #
+    # time = 1
+    # memory = 1
+    #
+    # damage = user_damage
+    # if not status:
+    #     time = 1.0 / time
+    #     memory = 1.0 / memory
+    #     damage = enemy_damage
+    #
+    # response = {
+    #     'reason': reason,
+    #     'console_message': description,
+    #     'status': status,
+    #     'hp_damage': damage / time,
+    #     'armor_damage': damage / memory
+    # }
 
     return dict(response)
 
