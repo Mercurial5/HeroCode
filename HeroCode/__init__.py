@@ -19,5 +19,7 @@ def create_app():
 
     from HeroCode.blueprints import auth
     app.register_blueprint(auth, url_prefix='/auth')
+    from HeroCode.blueprints import fight
+    app.register_blueprint(fight, url_prefix='/fight')
 
     return app
