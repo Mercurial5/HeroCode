@@ -11,7 +11,7 @@ class Tests(db.Model):
 
     @staticmethod
     def get(**kwargs) -> list[Tests]:
-        return Tests.query.filter_by(**kwargs)
+        return Tests.query.filter_by(**kwargs).all()
 
     def serialize(self):
         return {

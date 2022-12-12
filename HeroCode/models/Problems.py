@@ -11,8 +11,8 @@ class Problems(db.Model):
     description = db.Column(db.Text)
 
     @staticmethod
-    def get(**kwargs) -> list[Problems]:
-        return Problems.query.filter_by(**kwargs)
+    def get(**kwargs) -> Problems:
+        return Problems.query.filter_by(**kwargs).first()
 
     def serialize(self):
         return {
