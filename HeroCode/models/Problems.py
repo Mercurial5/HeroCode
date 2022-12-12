@@ -9,6 +9,7 @@ class Problems(db.Model):
     enemy_id = db.Column(db.Integer, db.ForeignKey('enemies.id'))
     name = db.Column(db.String(255))
     description = db.Column(db.Text)
+    solution = db.Column(db.Text)
 
     @staticmethod
     def get(**kwargs) -> list[Problems]:
@@ -19,5 +20,6 @@ class Problems(db.Model):
             'id': self.id,
             'enemy_id': self.enemy_id,
             'name': self.name,
-            'description': self.description
+            'description': self.description,
+            'solution': self.solution
         }
