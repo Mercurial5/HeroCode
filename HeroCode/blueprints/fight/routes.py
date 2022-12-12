@@ -4,6 +4,7 @@ import requests
 import json
 from flask import request
 
+from HeroCode.blueprints.login import login
 from HeroCode.blueprints.fight import fight
 from HeroCode.models import Enemies
 from HeroCode.models import Problems
@@ -12,7 +13,8 @@ from utils import strings
 
 
 @fight.route('/attack', methods=['POST'])
-def attack():
+@login
+def attack(user):
     body = request.json
     code = body.get('code', None)
     enemy_id = body.get('enemy_id', None)
@@ -89,6 +91,7 @@ def attack():
         damage = enemy_damage
 
     response = {
+        'status': True,
         'reason': reason,
         'console_message': description,
         'status': status,
@@ -113,15 +116,19 @@ def get_level():
 
     problem_names = []
     problem_descriptions = []
+    problem_solutions = []
     for problem in problems:
         problem_names.append(problem.name)
         problem_descriptions.append(problem.description)
+        problem_solutions.append(problem.solution)
 
     response = {
+        'status': True,
         'enemy_hp': enemy.hp,
         'stages_count': problems.count(),
         'problem_names': problem_names,
-        'problem_descriptions': problem_descriptions
+        'problem_descriptions': problem_descriptions,
+        'problem_solutions': problem_solutions
     }
 
     return response
