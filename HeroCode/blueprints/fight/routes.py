@@ -21,11 +21,11 @@ def attack():
 
     enemy = Enemies.get(id=enemy_id)
     if enemy is None:
-        return dict(status=False, reason=strings.missed_data)
+        return dict(status=False, reason=f'Enemy with id {enemy_id} does not exists')
 
     problem = Problems.get(enemy_id=enemy_id)
     if problem is None:
-        return dict(status=False, reason=strings.missed_data)
+        return dict(status=False, reason=f'Problem of enemy_id {enemy_id} was not created')
 
     tests = Tests.get(problem_id=problem.id)
 
