@@ -99,25 +99,17 @@ def get_level():
         return dict(status=False, reason=strings.missed_data)
 
     enemy = Enemies.get(id=enemy_id)
-    problems = Problems.get(enemy_id=enemy_id)
-    if None in [enemy, problems]:
+    problem = Problems.get(enemy_id=enemy_id)
+    if None in [enemy, problem]:
         return dict(status=False, reason=strings.not_found)
-
-    problem_names = []
-    problem_descriptions = []
-    problem_solutions = []
-    for problem in problems:
-        problem_names.append(problem.name)
-        problem_descriptions.append(problem.description)
-        problem_solutions.append(problem.solution)
 
     response = {
         'status': True,
         'enemy_hp': enemy.hp,
-        'stages_count': problems.count(),
-        'problem_names': problem_names,
-        'problem_descriptions': problem_descriptions,
-        'problem_solutions': problem_solutions
+        'stages_count': 1,
+        'problem_names': problem.name,
+        'problem_descriptions': problem.description,
+        'problem_solutions': problem.solution
     }
 
     return response
