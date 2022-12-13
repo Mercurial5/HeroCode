@@ -13,7 +13,6 @@ from utils import strings
 
 
 @fight.route('/attack', methods=['POST'])
-@login
 def attack():
     body = request.json
     code = body.get('code', None)
