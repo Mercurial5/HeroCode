@@ -14,55 +14,44 @@ from utils import strings
 
 @fight.route('/attack', methods=['POST'])
 @login
-def attack(user):
+def attack():
     body = request.json
     code = body.get('code', None)
     enemy_id = body.get('enemy_id', None)
-    problem_number = body.get('problem_number', None)
 
-    try:
-        problem_number = int(problem_number)
-    except:
-        return dict(status=False, reason=strings.missed_data)
-
-    if None in [code, enemy_id, problem_number]:
+    if None in [code, enemy_id]:
         return dict(status=False, reason=strings.missed_data)
 
     enemy = Enemies.get(id=enemy_id)
     if enemy is None:
-        return dict(status=False, reason=strings.missed_data)
+        return dict(status=False, reason=f'Enemy with id {enemy_id} does not exists')
 
-    problems = Problems.get(enemy_id=enemy_id)
-    if problems is None:
-        return dict(status=False, reason=strings.missed_data)
-    if (problem_number >= problems.count()) or (problem_number < 0):
-        return dict(status=False, reason=strings.wrong_index)
+    problem = Problems.get(enemy_id=enemy_id)
+    if problem is None:
+        return dict(status=False, reason=f'Problem with enemy_id {enemy_id} does not exists')
 
-    problem_id = problems[problem_number].id
-    tests = Tests.get(problem_id=problem_id)
+    tests = Tests.get(problem_id=problem.id)
 
-    if tests.count() == 0:
+    if len(tests) == 0:
         return dict(status=False, reason="No tests!")
 
-    inputs = ""
-    outputs = ""
-    #chr(10) - postgre '\n'
-    #input_template >>>  '1\n2'
-    #output_template >>> '3'
-    for test in tests:
-        inputs += test.input + "\nTestCase\n"
-        outputs += test.output + "\nTestCase\n"
+    inputs = [test.input for test in tests]
+    outputs = [test.output for test in tests]
+
+    weak_inputs, weak_outputs = inputs[:2], outputs[:2]
+    strong_inputs, strong_outputs = inputs[2:], outputs[2:]
 
     enemy_damage = enemy.damage
     user_damage = 50
 
     data = {
         'code': code,
-        'lang': 'py',
-        'input': inputs,
-        'output': outputs,
-        'io_count': tests.count(),
-        'io_tuple_count': 1
+        'lang': 'python',
+        'weak_inputs': weak_inputs,
+        'weak_outputs': weak_outputs,
+        'strong_inputs': strong_inputs,
+        'strong_outputs': strong_outputs,
+        'case_time': 2
     }
     headers = {
         'Content-Length': str(data.__sizeof__()),
@@ -70,16 +59,17 @@ def attack(user):
         'Accept': '*/*',
         'Connection': 'keep-alive'
     }
-    session = requests.session()
-    compiler_response = session.post(getenv('CODEAPI_HOST'), data=data, headers=headers, verify=False)
-    compiler_json = json.loads(compiler_response.text)
 
-    status = compiler_json['status']
-    reason = compiler_json['reason']
-    description = compiler_json['description']
-    case = compiler_json['case']
+    response = requests.post(getenv('CODEAPI_HOST'), data=data, headers=headers, verify=False).json()
 
-    print(compiler_json)
+    return response
+
+    status = response['status']
+    reason = response['reason']
+    description = response['description']
+    case = response['case']
+
+    print(response)
 
     time = 1
     memory = 1
