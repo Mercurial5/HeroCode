@@ -63,7 +63,7 @@ def attack():
     }
 
     response = requests.post(getenv('CODEAPI_HOST'), data=data, headers=headers, verify=False).json()
-    response['damage'] = enemy.hp
+    response['hp_damage'] = enemy.hp
 
     return response
 
