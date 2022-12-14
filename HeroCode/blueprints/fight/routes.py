@@ -107,9 +107,9 @@ def get_level():
         'status': True,
         'enemy_hp': enemy.hp,
         'stages_count': 1,
-        'problem_names': problem.name,
-        'problem_descriptions': problem.description,
-        'problem_solutions': problem.solution
+        'problem_names': [problem.name],
+        'problem_descriptions': [problem.description],
+        'problem_solutions': [problem.solution]
     }
 
     return response
