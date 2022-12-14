@@ -1,3 +1,4 @@
+from urllib.parse import quote_plus
 from os import getenv
 
 import requests
@@ -17,7 +18,7 @@ def attack():
     body = request.json
     code = body.get('code', None)
     enemy_id = body.get('enemy_id', None)
-    print(request.json)
+    code = quote_plus(code)
 
     if None in [code, enemy_id]:
         return dict(status=False, reason=strings.missed_data)
