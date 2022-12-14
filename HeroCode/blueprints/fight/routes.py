@@ -16,9 +16,12 @@ from utils import strings
 @fight.route('/attack', methods=['POST'])
 def attack():
     body = request.json
-    code = body.get('code', None)
+    code: str = body.get('code', None)
     enemy_id = body.get('enemy_id', None)
-    code = quote_plus(code)
+
+    print('a', quote_plus(code))
+    print('b', code.encode('utf-8'))
+    print('c', code)
 
     if None in [code, enemy_id]:
         return dict(status=False, reason=strings.missed_data)
