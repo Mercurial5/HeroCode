@@ -1,4 +1,4 @@
-from urllib.parse import quote_plus
+from urllib.parse import unquote
 from os import getenv
 
 import requests
@@ -19,9 +19,7 @@ def attack():
     code: str = body.get('code', None)
     enemy_id = body.get('enemy_id', None)
 
-    print('a', quote_plus(code))
-    print('b', code.encode('utf-8'))
-    print('c', code)
+    code = unquote(code)
 
     if None in [code, enemy_id]:
         return dict(status=False, reason=strings.missed_data)
