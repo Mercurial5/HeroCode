@@ -17,6 +17,7 @@ def attack():
     body = request.json
     code = body.get('code', None)
     enemy_id = body.get('enemy_id', None)
+    print(request.json)
 
     if None in [code, enemy_id]:
         return dict(status=False, reason=strings.missed_data)
