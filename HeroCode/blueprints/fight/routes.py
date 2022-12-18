@@ -5,11 +5,13 @@ import requests
 import json
 from flask import request
 
+from HeroCode import db
 from HeroCode.blueprints.login import login
 from HeroCode.blueprints.fight import fight
 from HeroCode.models import Enemies
 from HeroCode.models import Problems
 from HeroCode.models import Tests
+from HeroCode.models import Action
 from utils import strings
 
 
@@ -18,10 +20,11 @@ def attack():
     body = request.json
     code: str = body.get('code', None)
     enemy_id = body.get('enemy_id', None)
+    username = body.get('username', None)
 
     code = unquote(code)
 
-    if None in [code, enemy_id]:
+    if None in [code, enemy_id, username]:
         return dict(status=False, reason=strings.missed_data)
 
     enemy = Enemies.get(id=enemy_id)
@@ -64,6 +67,10 @@ def attack():
 
     response = requests.post(getenv('CODEAPI_HOST'), data=data, headers=headers, verify=False).json()
     response['hp_damage'] = enemy.hp if response['status'] else enemy.damage
+
+    action = Action(type='fight', text=str(response) + str(body), username=username)
+    db.session.add(action)
+    db.session.commit()
 
     return response
 
