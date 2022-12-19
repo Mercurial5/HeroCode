@@ -53,15 +53,16 @@ def register():
         db.session.add(user)
         db.session.commit()
 
-    mailing.email_verification(email)
+    #mailing.email_verification(email)
 
     return dict(status=True)
 
 
 @auth.route('/login', methods=['POST'])
 def login():
-    username = request.form.get('username', None)
-    password = request.form.get('password', None)
+    body = request.json
+    username = body.get('username', None)
+    password = body.get('password', None)
 
     if None in [username, password]:
         return dict(status=False, reason=strings.missed_data)
