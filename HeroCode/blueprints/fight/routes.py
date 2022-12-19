@@ -8,7 +8,7 @@ from flask import request
 from HeroCode import db
 from HeroCode.blueprints.login import login
 from HeroCode.blueprints.fight import fight
-from HeroCode.models import Enemies
+from HeroCode.models import Enemies, Users
 from HeroCode.models import Problems
 from HeroCode.models import Tests
 from HeroCode.models import Action
@@ -68,7 +68,8 @@ def attack():
     response = requests.post(getenv('CODEAPI_HOST'), data=data, headers=headers, verify=False).json()
     response['hp_damage'] = enemy.hp if response['status'] else enemy.damage
 
-    action = Action(type='fight', text=str(response) + str(body), username=username)
+    user = Users.get(username=username)
+    action = Action(type='fight', text=str(response) + str(body), user_id=user.id)
     db.session.add(action)
     db.session.commit()
 
