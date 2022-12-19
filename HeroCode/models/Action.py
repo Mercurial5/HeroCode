@@ -8,7 +8,7 @@ from HeroCode.models import db
 class Action(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     type = db.Column(db.String(255))
-    username = db.Column(db.String(255))
+    user_id = db.Column(db.Integer, nullable=False)
     text = db.Column(db.Text)
     time = db.Column(db.DateTime(timezone=True), nullable=False, default=datetime.now)
 
@@ -26,5 +26,5 @@ class Action(db.Model):
             'type': self.type,
             'text': self.text,
             'time': self.time,
-            'username': self.username
+            'user_id': self.user_id
         }
