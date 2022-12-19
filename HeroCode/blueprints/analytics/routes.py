@@ -2,7 +2,7 @@ from flask import request
 
 from HeroCode import db
 from HeroCode.blueprints.analytics import analytics
-from HeroCode.models import Action
+from HeroCode.models import Action, Users
 
 
 @analytics.route('/action', methods=['POST'])
@@ -15,7 +15,8 @@ def action():
     if None in [type, text, username]:
         return (dict(status=False))
 
-    action = Action(type=type, text=text, username=username)
+    user = Users.get(username=username)
+    action = Action(type=type, text=text, user_id=user.id)
     db.session.add(action)
     db.session.commit()
 
