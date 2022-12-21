@@ -17,15 +17,14 @@ from utils import strings
 
 @fight.route('/attack', methods=['POST'])
 def attack():
-    body = request.json
-    code: str = body.get('code', None)
-    enemy_id = body.get('enemy_id', None)
-    username = body.get('username', None)
-
-    code = unquote(code)
+    code: str = request.json.get('code', None)
+    enemy_id = request.json.get('enemy_id', None)
+    username = request.json.get('username', None)
 
     if None in [code, enemy_id, username]:
         return dict(status=False, reason=strings.missed_data)
+
+    code = unquote(code)
 
     enemy = Enemies.get(id=enemy_id)
     if enemy is None:
