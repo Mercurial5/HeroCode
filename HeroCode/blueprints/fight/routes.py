@@ -67,6 +67,7 @@ def attack():
     response = requests.post(getenv('CODEAPI_HOST'), data=data, headers=headers, verify=False).json()
     response['hp_damage'] = enemy.hp if response['status'] else enemy.damage
 
+    body = request.json
     user = Users.get(username=username)
     action = Action(type='fight', text=str(response) + str(body), user_id=user.id)
     db.session.add(action)
